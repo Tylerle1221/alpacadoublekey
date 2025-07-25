@@ -9,7 +9,8 @@ ALPACA_SECRET_KEY = 'hujr7cgZERs0NYSCzHYBvF5sHDEQxXFJK872UC4y'
 
 @app.route('/alpaca/account', methods=['GET'])
 def proxy_account():
-    _ = request.headers.get("X-API-KEY")  # Optional: placeholder for ChatGPT token
+    # Accept dummy key header from ChatGPT (but don't enforce it)
+    _ = request.headers.get("X-API-KEY")  # Optional for Actions spec
 
     headers = {
         'APCA-API-KEY-ID': ALPACA_KEY_ID,
@@ -23,11 +24,10 @@ def proxy_account():
 
     data = response.json()
 
-    # Helper to safely convert strings to floats
     def safe_float(value):
         try:
             return float(value)
-        except (TypeError, ValueError):
+        except:
             return 0.0
 
     cleaned = {
@@ -41,10 +41,3 @@ def proxy_account():
     }
 
     return jsonify(cleaned), 200
-
-@app.route('/')
-def home():
-    return '✅ Alpaca Proxy is running!'
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
